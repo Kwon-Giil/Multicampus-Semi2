@@ -1,8 +1,6 @@
 # Kwon-Giil add.
 chromedriver.exe
 textrank/
-seq2seq/
-amiok/
 models/koGPT2_finetuned
 
 # Byte-compiled / optimized / DLL files
