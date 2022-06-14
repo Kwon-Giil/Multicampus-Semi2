@@ -84,6 +84,6 @@ def sentence_extraction(sentences):
 
     if result == "":
         result = sentences
-    
-    result = spell_checker(result)
+        
+    result = spell_checker.check(result).as_dict()["checked"]
     return result
