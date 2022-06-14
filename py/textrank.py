@@ -16,7 +16,7 @@ def similarity(a, b):
     except:
         return 0
 
-class Tankrank:
+class Textrank:
     def __init__(self, **kargs):
         self.dictCount = {}
         self.tag_sen = []
@@ -27,11 +27,12 @@ class Tankrank:
         self.threshold = 0.005
 
     def load_sentences(self, sentences, tokenizer):
+        stopwords = set([('있','VV'),('하','VV'),('되','VV')])
         for sent in sentences.split('.'):
             temp_lst = []
             temp = tokenizer.pos(sent)
             for i in temp:
-                if (i[0] not in stopwords)and (i[1] in ('NNG', 'NNP', 'VV', 'VA')):
+                if (i not in stopwords) and (i[1] in ('NNG', 'NNP', 'VV', 'VA')):
                     temp_lst.append(i)
             self.tag_sen.append(set(temp_lst))
             self.dictCount[len(self.dictCount)] = sent
@@ -76,8 +77,7 @@ class Tankrank:
 def sentence_extraction(sentences):
     tr = Textrank()
     tokenizer = Mecab()
-    stopwords = ['있','을','하','되']
-    tr.load_sentences(sentences)
+    tr.load_sentences(sentences, tokenizer)
     tr.build_graph()
     rank = tr.pagerank()
     result = tr.new_line()
