@@ -14,21 +14,23 @@ from eunjeon import Mecab
 # ==========================================================
 
 # ====================Global Variable=======================
-data = pd.read_csv('./data/2.Textranked.csv')
+# data = pd.read_csv('./data/2.Textranked.csv')
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
-GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
+# GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
+# GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
 
-Q_TKN = "<usr>"
-A_TKN = "<sys>"
-BOS = '</s>'
-EOS = '</s>'
-MASK = '<mask>'
-PAD = '<pad>'
+# Q_TKN = "<usr>"
+# A_TKN = "<sys>"
+# BOS = '</s>'
+# EOS = '</s>'
+# MASK = '<mask>'
+# PAD = '<pad>'
 # ============================================================
-
+EOS_token = 1
+SOS_token = 0
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ==========================Similarity========================
 def get_df_token(data):
     tagger = Mecab()
@@ -87,16 +89,17 @@ class QNA:
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: "SOS", 1:"EOS"}
+        self.index2word = {0: "SOS", 1: "EOS", 2: "UNK"}
         self.n_words = 2
         self.stopword = set([('있', 'VV'), ('하', 'VV'), ('되', 'VV') ])
 
     def addSentence(self, sentence):
         for word in sentence.split('.'):
             self.addWord(word)
-
+ # and nn in ('NNG', 'NNP', 'VV', 'VA')
     def addWord(self, sen):
-        for word in [ val for (val, nn) in tagger.pos(sen) if (val, nn) not in self.stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
+        tagger = Mecab()
+        for word in [ val for (val, nn) in tagger.pos(sen) if (val, nn) not in self.stopword]:
             if word not in self.word2index:             
                 self.word2index[word] = self.n_words
                 self.word2count[word] = 1
@@ -113,7 +116,7 @@ def normalizeString(s):
 def readchat(question, answer, reverse=False):
     print("Reading lines...")
 
-    lines = open('/content/drive/MyDrive/Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
+    lines = open('./data/2.Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
     
     pairs = [[normalizeString(s) for s in l.split(',')] for l in lines]
 
@@ -145,10 +148,24 @@ def prepareData(question, answer, reverse=False):
     print(output_a.name, output_a.n_words)
     return input_q, output_a, pairs
 
-input_q, output_a, pairs = prepareData('question', 'answer', True)
+class EncoderRNN(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(EncoderRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size)
+
+    def forward(self, input, hidden):
+        embedded = self.embedding(input).view(1, 1, -1)
+        output = embedded
+        output, hidden = self.gru(output, hidden)
+        return output, hidden
+
+    def initHidden(self):
+        return torch.zeros(1, 1, self.hidden_size, device=DEVICE)
 
 class AttnDecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=MAX_LENGTH):
+    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=2000):
         super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -188,16 +205,19 @@ def indexesFromSentence(QNA, sentence):
     word2index_list = []
     stopword = set([('있', 'VV'), ('하', 'VV'), ('되', 'VV') ])
     for sen in sentence.split('.'):
-        for word in [ val for (val, nn) in tagger.pos(sen) if (val, nn) not in stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
-            word2index_list.append(QNA.word2index[word])
-    return word2index_list
+        for word in [val for (val, nn) in tagger.pos(sen) if (val, nn) not in stopword]:
+            try:
+                word2index_list.append(QNA.word2index[word])
+            except:
+                word2index_list.append(QNA.word2index['UNK'])
+            return word2index_list
 
 def tensorFromSentence(QNA, sentence):
     indexes = indexesFromSentence(QNA, sentence)
     indexes.append(EOS_token)
     return torch.tensor(indexes, dtype=torch.long, device=DEVICE).view(-1, 1)
 
-def evaluate(encoder, decoder, sentence, max_length=200):
+def evaluate(encoder, decoder, sentence, input_q, output_a, max_length=2000):
     with torch.no_grad():
         input_tensor = tensorFromSentence(input_q, sentence)
         input_length = input_tensor.size()[0]
@@ -211,17 +231,18 @@ def evaluate(encoder, decoder, sentence, max_length=200):
             encoder_outputs[ei] += encoder_output[0, 0]
 
         decoder_input = torch.tensor([[SOS_token]], device=DEVICE)  # SOS
-
+        # SOS_token = 0
         decoder_hidden = encoder_hidden
 
         decoded_words = []
         decoder_attentions = torch.zeros(max_length, max_length)
-
+        
         for di in range(max_length):
             decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_input, decoder_hidden, encoder_outputs)
             decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
+            # EOS_token = 1
             if topi.item() == EOS_token:
                 decoded_words.append('<EOS>')
                 break
@@ -231,6 +252,7 @@ def evaluate(encoder, decoder, sentence, max_length=200):
             decoder_input = topi.squeeze().detach()
 
         return decoded_words, decoder_attentions[:di + 1]
+        print(' '.join(output_words))
 
 # ========================================================================================
 
@@ -253,7 +275,7 @@ def make_answer(data):
     PAD = '<pad>'
 
     if result['cosine_similarity'].iloc[0] >= 0.6:
-        return result['Answer'].iloc[0]
+        return print('From Sim:', result['Answer'].iloc[0])
     else:
         if len(q) < 200:
             SOS_token = 0
@@ -262,15 +284,20 @@ def make_answer(data):
             tagger = Mecab()
 
             input_q, output_a, pairs = prepareData('question', 'answer', True)
-            encoder = torch.load('../models/Seq2Seq_mecab_encoder1_model')
-            encoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_encoder1'))
-            decoder = AttnDecoderRNN(256, 7755, dropout_p=0.1)
-            decoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_attn_decoder1'))
-            evaluate(encoder, decoder, q)
-        else:
-            GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
-            GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
 
+            encoder = EncoderRNN(12518, 256).to(DEVICE)
+            encoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_encoder1.pth'))
+            decoder = AttnDecoderRNN(256, 7755, dropout_p=0.1).to(DEVICE)
+            decoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_attn_decoder1.pth'))
+            print("from Seq2seq:")
+            output_words, attentions = evaluate(encoder, decoder, q, input_q, output_a)
+            output_sentence = ' '.join(output_words)
+            print(output_sentence)
+        else:
+            GPT_tok = PreTrainedTokenizerFast.from_pretrained("../models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
+            GPT = GPT2LMHeadModel.from_pretrained('../models/koGPT2_finetuned')
+            GPT.to(DEVICE)
+            
             with torch.no_grad():
                 q = q.strip()
                 a = ""
