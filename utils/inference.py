@@ -113,7 +113,7 @@ def normalizeString(s):
 def readchat(question, answer, reverse=False):
     print("Reading lines...")
 
-    lines = open('./data/2.Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
+    lines = open('../data/2.Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
     
     pairs = [[normalizeString(s) for s in l.split(',')] for l in lines]
 
@@ -236,7 +236,7 @@ def make_answer(data):
     q = input('Question:')
     q_token = get_ques_token(q)
 
-    data = pd.read_csv('./data/2.Textranked.csv')
+    data = pd.read_csv('../data/2.Textranked.csv')
     d_token = get_df_token(data)
 
     result = jaccard_high(data, q_token, 100)
@@ -260,14 +260,14 @@ def make_answer(data):
             tagger = Mecab()
 
             input_q, output_a, pairs = prepareData('question', 'answer', True)
-            encoder = torch.load('./models/Seq2Seq_mecab_encoder1_model')
-            encoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_encoder1'))
+            encoder = torch.load('../models/Seq2Seq_mecab_encoder1_model')
+            encoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_encoder1'))
             decoder = AttnDecoderRNN(256, 7755, dropout_p=0.1)
-            decoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_attn_decoder1'))
+            decoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_attn_decoder1'))
             evaluate(encoder, decoder, q)
         else:
-            GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
-            GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
+            GPT_tok = PreTrainedTokenizerFast.from_pretrained("../models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
+            GPT = GPT2LMHeadModel.from_pretrained('../models/koGPT2_finetuned')
 
             with torch.no_grad():
                 q = q.strip()
