@@ -1,6 +1,11 @@
 # ====================== Library ===========================
+from unittest.util import _MAX_LENGTH
 import pandas as pd
+import re
 import torch
+import torch.nn as nn
+from torch import optim
+import torch.nn.functional as F
 
 from transformers import PreTrainedTokenizerFast,GPT2LMHeadModel
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -26,18 +31,18 @@ PAD = '<pad>'
 
 # ==========================Similarity========================
 def get_df_token(data):
-    mecab = Mecab()
+    tagger = Mecab()
     q_pos = []
     for i in range(len(data)):
-        q_pos.append(mecab.pos(data['Question'][i]))
+        q_pos.append(tagger.pos(data['Question'][i]))
     data['tokens'] = q_pos
     pos = ["NNG","NNP","VV","VA"]
     data['tokens'] = data['tokens'].apply(lambda x: [t for (t, p) in x if p in pos])
     return data
 
 def get_ques_token(question):
-    mecab = Mecab()
-    ques_token = mecab.pos(question)
+    tagger = Mecab()
+    ques_token = tagger.pos(question)
     ques_token = ques_remove(ques_token)
     return ques_token
 
@@ -91,7 +96,7 @@ class QNA:
             self.addWord(word)
 
     def addWord(self, sen):
-        for word in [ val for (val, nn) in mecab.pos(sen) if (val, nn) not in self.stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
+        for word in [ val for (val, nn) in tagger.pos(sen) if (val, nn) not in self.stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
             if word not in self.word2index:             
                 self.word2index[word] = self.n_words
                 self.word2count[word] = 1
@@ -179,11 +184,11 @@ class AttnDecoderRNN(nn.Module):
         return torch.zeros(1, 1, self.hidden_size, device=DEVICE)
               
 def indexesFromSentence(QNA, sentence):
-    mecab = Mecab()
+    tagger = Mecab()
     word2index_list = []
     stopword = set([('있', 'VV'), ('하', 'VV'), ('되', 'VV') ])
     for sen in sentence.split('.'):
-        for word in [ val for (val, nn) in mecab.pos(sen) if (val, nn) not in stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
+        for word in [ val for (val, nn) in tagger.pos(sen) if (val, nn) not in stopword and nn in ('NNG', 'NNP', 'VV', 'VA')]:
             word2index_list.append(QNA.word2index[word])
     return word2index_list
 
@@ -251,6 +256,11 @@ def make_answer(data):
         return result['Answer'].iloc[0]
     else:
         if len(q) < 200:
+            SOS_token = 0
+            EOS_token = 1
+            MAX_LENGTH = 2000
+            tagger = Mecab()
+
             input_q, output_a, pairs = prepareData('question', 'answer', True)
             encoder = torch.load('../models/Seq2Seq_mecab_encoder1_model')
             encoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_encoder1'))
