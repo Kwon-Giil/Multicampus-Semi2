@@ -14,19 +14,19 @@ from eunjeon import Mecab
 # ==========================================================
 
 # ====================Global Variable=======================
-data = pd.read_csv('./data/2.Textranked.csv')
+# data = pd.read_csv('./data/2.Textranked.csv')
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
-GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
+# GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
+# GPT = GPT2LMHeadModel.from_pretrained('./models/koGPT2_finetuned')
 
-Q_TKN = "<usr>"
-A_TKN = "<sys>"
-BOS = '</s>'
-EOS = '</s>'
-MASK = '<mask>'
-PAD = '<pad>'
+# Q_TKN = "<usr>"
+# A_TKN = "<sys>"
+# BOS = '</s>'
+# EOS = '</s>'
+# MASK = '<mask>'
+# PAD = '<pad>'
 # ============================================================
 
 # ==========================Similarity========================
@@ -113,7 +113,7 @@ def normalizeString(s):
 def readchat(question, answer, reverse=False):
     print("Reading lines...")
 
-    lines = open('/content/drive/MyDrive/Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
+    lines = open('./data/2.Textranked.csv', encoding='utf-8').read().strip().split('\n')[1:]
     
     pairs = [[normalizeString(s) for s in l.split(',')] for l in lines]
 
@@ -145,10 +145,8 @@ def prepareData(question, answer, reverse=False):
     print(output_a.name, output_a.n_words)
     return input_q, output_a, pairs
 
-input_q, output_a, pairs = prepareData('question', 'answer', True)
-
 class AttnDecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=MAX_LENGTH):
+    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=2000):
         super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -262,10 +260,10 @@ def make_answer(data):
             tagger = Mecab()
 
             input_q, output_a, pairs = prepareData('question', 'answer', True)
-            encoder = torch.load('../models/Seq2Seq_mecab_encoder1_model')
-            encoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_encoder1'))
+            encoder = torch.load('./models/Seq2Seq_mecab_encoder1_model')
+            encoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_encoder1'))
             decoder = AttnDecoderRNN(256, 7755, dropout_p=0.1)
-            decoder.load_state_dict(torch.load('../models/Seq2Seq_mecab_attn_decoder1'))
+            decoder.load_state_dict(torch.load('./models/Seq2Seq_mecab_attn_decoder1'))
             evaluate(encoder, decoder, q)
         else:
             GPT_tok = PreTrainedTokenizerFast.from_pretrained("./models/koGPT2_tokenizer", bos_token='</s>', eos_token='</s>', unk_token='<unk>', pad_token='<pad>', mask_token='<mask>')
