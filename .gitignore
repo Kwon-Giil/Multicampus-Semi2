@@ -2,6 +2,7 @@
 chromedriver.exe
 textrank/
 models/koGPT2_finetuned
+pre/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
