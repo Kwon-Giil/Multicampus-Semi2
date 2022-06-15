@@ -42,7 +42,7 @@
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
         <!-- Brand/logo -->
         <a class="navbar-brand" style="margin-left:50px;margin-right:100px;" href="{% if menu.home %}#{% else %}/{% endif %}">
-            <img src="{{url_for('static', filename='data/logo.jpg')}}" alt="Logo" style="height:45px;">
+            <img src="{{url_for('static', filename='img/logo.jpg')}}" alt="Logo" style="height:45px;">
         </a>
 
         <!-- Links -->
@@ -72,59 +72,59 @@
                         <a class="nav-link dropdown-toggle {% if menu.m1 %}active{% endif %}" 
                            data-toggle="dropdown" href="#">민사 상담</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% if menu.m1 %}active{% endif %}">민사 소송, 민사 집행</a>
-                            <a class="dropdown-item" href="./module/read.html">이혼</a>
-                            <a class="dropdown-item" href="./module/read.html">노무</a>
-                            <a class="dropdown-item" href="./module/read.html">교통사고</a>
-                            <a class="dropdown-item" href="./module/read.html">재산, 상속</a>
+                            <a class="dropdown-item" href="menu1">민사 소송, 민사 집행</a>
+                            <a class="dropdown-item" href="read">이혼</a>
+                            <a class="dropdown-item" href="read">노무</a>
+                            <a class="dropdown-item" href="read">교통사고</a>
+                            <a class="dropdown-item" href="read">재산, 상속</a>
                         </div>
                     </li>
 
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
-                           data-toggle="dropdown" href="./module/read.html">형사 상담</a>
+                        <a class="nav-link dropdown-toggle {% if menu.m2 %}{% endif %}" 
+                           data-toggle="dropdown" href="read">형사 상담</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="./module/read.html">폭행, 성 관련</a>
-                            <a class="dropdown-item" href="./module/read.html">절도, 강도, 편취</a>
-                            <a class="dropdown-item" href="./module/read.html">횡령, 배임</a>
-                            <a class="dropdown-item" href="./module/read.html">사기, 사칭</a>
+                            <a class="dropdown-item" href="read">폭행, 성 관련</a>
+                            <a class="dropdown-item" href="read">절도, 강도, 편취</a>
+                            <a class="dropdown-item" href="read">횡령, 배임</a>
+                            <a class="dropdown-item" href="read">사기, 사칭</a>
                         </div>
                     </li>
 
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
-                           data-toggle="dropdown" href="./module/read.html">세무 상담</a>
+                        <a class="nav-link dropdown-toggle {% if menu.m2 %}{% endif %}" 
+                           data-toggle="dropdown" href="read">세무 상담</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="./module/read.html">소득세, 법인세</a>
-                            <a class="dropdown-item" href="./module/read.html">재산세</a>
-                            <a class="dropdown-item" href="./module/read.html">부가가치세</a>
-                            <a class="dropdown-item" href="./module/read.html">각종 특별세 관련</a>
-                            <a class="dropdown-item" href="./module/read.html">세금 환급 및 과다 납부 세금 관련</a>
+                            <a class="dropdown-item" href="read">소득세, 법인세</a>
+                            <a class="dropdown-item" href="read">재산세</a>
+                            <a class="dropdown-item" href="read">부가가치세</a>
+                            <a class="dropdown-item" href="read">각종 특별세 관련</a>
+                            <a class="dropdown-item" href="read">세금 환급 및 과다 납부 세금 관련</a>
                         </div>
                     </li>
 
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
+                        <a class="nav-link dropdown-toggle {% if menu.m2 %}{% endif %}" 
                            data-toggle="dropdown" href="#">전문 분야 소송</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">의료 분쟁 및 의료 과실</a>
-                            <a class="dropdown-item" href="#">특허권 등 기술 관련</a>
-                            <a class="dropdown-item" href="#">환경 관련 소송</a>
-                            <a class="dropdown-item" href="#">표절 등 예술 관련</a>
-                            <a class="dropdown-item" href="#">기타 분야 관련</a>
+                            <a class="dropdown-item" href="read">의료 분쟁 및 의료 과실</a>
+                            <a class="dropdown-item" href="read">특허권 등 기술 관련</a>
+                            <a class="dropdown-item" href="read">환경 관련 소송</a>
+                            <a class="dropdown-item" href="read">표절 등 예술 관련</a>
+                            <a class="dropdown-item" href="read">기타 분야 관련</a>
                         </div>
                     </li>
                     
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
-                           data-toggle="dropdown" href="#">행정 관련</a>
+                        <a class="nav-link dropdown-toggle {% if menu.m2 %}{% endif %}" 
+                           data-toggle="dropdown" href="read">행정 관련</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">행정 소송</a>
-                            <a class="dropdown-item" href="#">행정 심판</a>
+                            <a class="dropdown-item" href="read">행정 소송</a>
+                            <a class="dropdown-item" href="read">행정 심판</a>
                         </div>
                     </li>
                     

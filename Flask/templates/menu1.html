@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block subtitle %}
+    <strong>법률 상담 (민사 상담)</strong>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <form action="/menu1" method="post">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><label for="question"><b>법률 상담</b></label></td>
+                        <td><textarea name="question" id="question" cols="80" rows="5">당신의 상담 내용을 입력하세요.</textarea></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <button type="submit" class="btn btn-primary mr-2">실행</button>
+                            <button type="reset" class="btn btn-secondary">취소</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-1"></div>
+    </div>
+{% endblock %}
