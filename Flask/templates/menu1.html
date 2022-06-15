@@ -3,6 +3,17 @@
     <strong style="font-family: Nexon Lv2 Gothic;">법률 상담 (민사 상담)</strong>
 {% endblock %}
 {% block content %}
+    
+    <script>
+        function press(f){
+            // 13번이 enter키를 의미
+            if(f.keycode == 13){
+                question.submit();// enter 키를 누르면 submit이 된다.
+                // 이 기능은 되도 그만 안되도 그만이긴 하지만...
+            }
+        }
+    </script>
+
     <div class="row" style="width:auto;">
         <div class="col-1"></div>
         <div class="col-10">
@@ -10,7 +21,8 @@
                 <table class="table table-borderless" style="width:auto;">
                     <tr style="width:auto; max-width: 100%;">
                         <td><label for="question" style="font-family: Nexon Lv2 Gothic Light;"><b>법률 상담</b></label></td>
-                        <td><textarea style="font-family: Nexon Lv2 Gothic Light;" name="question" id="question" cols="80" rows="5">당신의 상담 내용을 입력하세요.</textarea></td>
+                        <td><textarea style="font-family: Nexon Lv2 Gothic Light;" name="question" id="question" cols="80" 
+                            rows="5" onkeypress="JavaScript:press(this.form)">당신의 상담 내용을 입력하세요.</textarea></td>
                     </tr>
 
                     <tr style="width:auto;">
