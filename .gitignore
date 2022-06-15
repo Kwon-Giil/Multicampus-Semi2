@@ -4,6 +4,7 @@ textrank/
 models/koGPT2_finetuned
 pre/
 test.ipynb
+Flask/static/models/koGPT2_finetuned/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
