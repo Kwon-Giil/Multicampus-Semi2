@@ -1,24 +1,20 @@
 {% extends "base.html" %}
 {% block subtitle %}
-    <strong>CKEditor 사용 예</strong><small> - 읽기</small>
+    <strong style="font-family: NEXON Lv2 Gothic;">준비 중입니다.</strong><small style="font-family: NEXON Lv2 Gothic Light;">조속히 진행하겠습니다.</small>
 {% endblock %}
 {% block content %}
     <div class="row">
         <table class="table">
+            
             <tr>
-                <td>제목</td>
+                <td style="font-family: NEXON Lv2 Gothic Light;">불편을 끼쳐드려 죄송합니다.</td>
                 <td>{{title|safe()}}</td>
             </tr>
             <tr>
-                <td>내용</td>
+                <td style="font-family: NEXON Lv2 Gothic Light;">준비 중입니다.</td>
                 <td>{{content|safe()}}</td>
             </tr>
-            <tr>
-                <td colspan="2" style="text-align: center;">
-                    <button class="btn btn-primary" 
-                            onclick="location.href='/module/update'">수정</button>
-                </td>
-            </tr>
+
         </table>
     </div>
 {% endblock %}

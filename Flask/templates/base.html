@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Project{% endblock %}</title>
+    <title>{% block title %}Project{% endblock %}법률 전문가 상담 플랫폼</title>
     <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="shortcut icon" href="{{url_for('static', filename='data/favicon.ico')}}">
@@ -17,12 +17,32 @@
             </script>
         {% endif %}
     {% endwith %}
+    <style>
+        @font-face {
+            font-family: 'NEXON Lv2 Gothic';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NEXON Lv2 Gothic Bold';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic Bold.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NEXON Lv2 Gothic Light';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic Light.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top">
         <!-- Brand/logo -->
-        <a class="navbar-brand" style="margin-left:50px;margin-right:100px;" href="#">
-            <img src="{{url_for('static', filename='data/logo.png')}}" alt="Logo" style="height:45px;">
+        <a class="navbar-brand" style="margin-left:50px;margin-right:100px;" href="{% if menu.home %}#{% else %}/{% endif %}">
+            <img src="{{url_for('static', filename='data/logo.jpg')}}" alt="Logo" style="height:45px;">
         </a>
 
         <!-- Links -->
@@ -33,16 +53,11 @@
                     <i class="fa fa-home"></i> Home
                 </a>
             </li>
-            <li class="nav-item mr-5">
-                <a class="nav-link {% if menu.ma %}active{% endif %}" 
-                   href="{% if menu.ma %}#{% else %}/mail{% endif %}">
-                    <i class="fa fa-envelope"></i> To:admin
-                </a>
-            </li>
         </ul>
+        
         <nav class="navbar navbar-center">
             <span class="navbar-text">
-                <strong>{% block heading %}법률 전문가 지식인 데이터를 이용한 법률 상담 AI{% endblock %}</strong>
+                <strong style="font-family: NEXON Lv2 Gothic;">{% block heading %}법률 등 각 전문가 원격 AI 상담 플랫폼{% endblock %}</strong>
             </span>
         </nav>
     </nav>
@@ -54,40 +69,65 @@
 
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link {% if menu.m1 %}active{% endif %}" data-toggle="dropdown" 
-                           href="{% if menu.m1 %}#{% else %}/menu1{% endif %}">법률 상담</a>
-                    </li>
-                    <div class="dropdown-divider"></div>
-                    <li class="nav-item">
-                        <a class="nav-link {% if menu.m2 %}active{% endif %}" 
-                           href="{% if menu.m2 %}#{% else %}/menu2{% endif %}">메뉴 2</a>
+                        <a class="nav-link dropdown-toggle {% if menu.m1 %}active{% endif %}" 
+                           data-toggle="dropdown" href="#">민사 상담</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% if menu.m1 %}active{% endif %}">민사 소송, 민사 집행</a>
+                            <a class="dropdown-item" href="./module/read.html">이혼</a>
+                            <a class="dropdown-item" href="./module/read.html">노무</a>
+                            <a class="dropdown-item" href="./module/read.html">교통사고</a>
+                            <a class="dropdown-item" href="./module/read.html">재산, 상속</a>
+                        </div>
                     </li>
 
                     <div class="dropdown-divider"></div>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if menu.m3 %}active{% endif %}" 
-                           data-toggle="dropdown" href="#">메뉴 그룹</a>
+                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
+                           data-toggle="dropdown" href="./module/read.html">형사 상담</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="/module/sub1">음성 녹음</a>
-                            <a class="dropdown-item" href="/module/sub2">리디렉션</a>
-                            <a class="dropdown-item" href="/module/write">글 쓰기</a>
-                            <a class="dropdown-item" href="/module/read">글 읽기</a>
-                            <a class="dropdown-item" href="/module/update">글 수정하기</a>
+                            <a class="dropdown-item" href="./module/read.html">폭행, 성 관련</a>
+                            <a class="dropdown-item" href="./module/read.html">절도, 강도, 편취</a>
+                            <a class="dropdown-item" href="./module/read.html">횡령, 배임</a>
+                            <a class="dropdown-item" href="./module/read.html">사기, 사칭</a>
                         </div>
                     </li>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-divider"></div>
 
-                    <li class="nav-item">
-                        <a class="nav-link {% if menu.cf %}active{% endif %}" 
-                           href="{% if menu.cf %}#{% else %}/classify{% endif %}">타이타닉 분류</a>
-                    </li>
                     <div class="dropdown-divider"></div>
-                    <li class="nav-item">
-                        <a class="nav-link {% if menu.cu %}active{% endif %}" 
-                           href="{% if menu.cu %}#{% else %}/cluster{% endif %}">군집화/PCA</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
+                           data-toggle="dropdown" href="./module/read.html">세무 상담</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="./module/read.html">소득세, 법인세</a>
+                            <a class="dropdown-item" href="./module/read.html">재산세</a>
+                            <a class="dropdown-item" href="./module/read.html">부가가치세</a>
+                            <a class="dropdown-item" href="./module/read.html">각종 특별세 관련</a>
+                            <a class="dropdown-item" href="./module/read.html">세금 환급 및 과다 납부 세금 관련</a>
+                        </div>
                     </li>
+
                     <div class="dropdown-divider"></div>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
+                           data-toggle="dropdown" href="#">전문 분야 소송</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">의료 분쟁 및 의료 과실</a>
+                            <a class="dropdown-item" href="#">특허권 등 기술 관련</a>
+                            <a class="dropdown-item" href="#">환경 관련 소송</a>
+                            <a class="dropdown-item" href="#">표절 등 예술 관련</a>
+                            <a class="dropdown-item" href="#">기타 분야 관련</a>
+                        </div>
+                    </li>
+                    
+                    <div class="dropdown-divider"></div>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if read %}active{% endif %}" 
+                           data-toggle="dropdown" href="#">행정 관련</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">행정 소송</a>
+                            <a class="dropdown-item" href="#">행정 심판</a>
+                        </div>
+                    </li>
+                    
                 </ul>
             </div>
             <div class="col-10">
@@ -100,8 +140,8 @@
     </div>  
     
     <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center fixed-bottom">
-        <span class="navbar-text">
-            Copyright &copy; 2022 프로젝트6조(마리아, 제임스). All rights reserved.
+        <span class="navbar-text" href = "https://github.com/Kwon-Giil/Multicampus-Semi2">
+            Copyright &copy; 2022 2차 Semi-프로젝트3조(강신웅, 권기일, 박찬규, 신재웅). All rights reserved.
         </span>
     </nav>
     {% block additional_body %}
