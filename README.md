@@ -22,8 +22,8 @@ MultiCampus 2nd Semi-Project (2022.05.30~2022.06.16)
  koGPT-2 (Transformer Model)
 ```
 #### Results
-![result_1](./result/result_1.png)
-![result_2](./result/result_2.png)
+![result_1](./result/Result_1.png)
+![result_2](./result/Result_2.png)
 #### Contributors
 ```
  멀티캠퍼스 2차 Semi Project 3조입니다. 
