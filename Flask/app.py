@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask import current_app
 import numpy as np
 import pandas as pd
+import re
 import random
 from hanspell import spell_checker
 import warnings
@@ -36,14 +37,15 @@ def menu1():
         ori_question = request.form['question'].replace('\n','<br>')
         question = textrank.sentence_extraction(ori_question)
         answer = inference.make_answer(question, GPT, GPT_tok)
-        # answer = spell_checker.check(answer).as_dict()["checked"]
+        answer = re.sub('[^가-힣A-Z0-9]','',answer)
+        answer = spell_checker.check(answer).as_dict()["checked"]
 
         front = ['안녕하세요. <b>법률 상담 AI 서비스입니다.</b> 질문에 대한 답변드리겠습니다.',
                  '안녕하십니까? <b>당신의 상담 결과</b>를 안내드리겠습니다.',
                  '안녕하세요. <b>상담 내용</b>에 대한 답변드리겠습니다.']
         end = ['질문에 대한 충분한 대답이 됐길 바라며, 자세한 내용은 변호사와 대면하여 진행하시길 바랍니다.']
         random_n = random.randint(0, 2)
-        answer = '&nbsp;' + front[random_n] + '<br>' + '&nbsp;' + answer + '<br>' + '&nbsp;' + end[0]
+        answer = '&nbsp;' + front[random_n] + '<br>' + '&nbsp;' + answer + '.' + '<br>' + '&nbsp;' + end[0]
 
         return render_template('menu1_res.html', menu=menu, question=ori_question, answer=answer)
 
